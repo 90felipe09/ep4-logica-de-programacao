@@ -18,7 +18,7 @@
       (into #{} T)
       (reduce (
         fn [acc rule] (
-          conj acc { (first rule) (last rule) } 
+          conj acc (hash-map (first rule) (last rule))
           ) 
         ) #{} P
       )
