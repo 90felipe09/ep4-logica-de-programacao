@@ -1,0 +1,7 @@
+{
+    "N": ["S"],
+    "T": ["a", "b"],
+    "P": [["S", "aba"], ["S", "aab"], ["S", "baa"], ["S", "SS"], ["S", "aSba"], ["S", "abSa"], ["S", "abSa"], ["S", "aaSb"], ["S", "bSaa"], ["S", "baSa"], ["S", "aSab"]],
+    "S": "S",
+    "W": "aabaabbbaaaa"
+}

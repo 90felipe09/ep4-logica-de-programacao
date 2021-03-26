@@ -1,4 +1,4 @@
-(ns ep4-logica-de-programacao.core
+(ns ep4.core
   (:gen-class))
 
 (defn -main
