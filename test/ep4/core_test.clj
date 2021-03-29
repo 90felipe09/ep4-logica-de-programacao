@@ -177,3 +177,21 @@
     (println "assert2: \n" assert2)
   )
 )
+
+
+(deftest create-set-of-potential-variables
+  (testing "create-set-of-potential-variables")
+  (let
+    [raw-input (slurp "resources/chomskyExample.json")
+     input (ip/parse-input raw-input)
+     production-set (ip/get-productions (:grammar input))
+     non-terminals-set (ip/get-non-terminals (:grammar input)) 
+     variables-set (ttc/create-set-of-variables-that-derives-to-terminals production-set non-terminals-set)
+     potential-variables (ttc/create-set-of-potential-variables  production-set variables-set non-terminals-set)]
+    (println "############### create-set-of-potential-variables ################")
+    (println "production-set: \n" production-set)
+    (println "variables-set: \n" variables-set)
+    (println "non-terminals-set: \n" non-terminals-set)
+    (println "potential-variables: \n" potential-variables)
+  )
+)

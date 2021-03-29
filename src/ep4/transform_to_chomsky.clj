@@ -125,3 +125,16 @@
     )
 )
 
+(defn create-set-of-potential-variables
+    "Given a set of symbols, a set of non terminals and a set of production rules, returns a set of only variables that derives to terminals
+    or variables present on the given set"
+    [productions-set variables-set non-terminal-set]
+    (reduce (
+        fn [acc rule] (
+            if (has-one-of-the-vars-in-word? (first (vals rule)) variables-set)
+                (conj acc (first (keys rule)))
+            acc
+            ) 
+        ) variables-set productions-set
+    )   
+)
