@@ -77,3 +77,32 @@
         ) 
     ) 
 )    
+
+(defn is-only-terminals?
+    "Given a string and a set of non-terminal symbols, asserts if it's made of only terminals"
+    [input-chain non-terminals-set]
+    (loop [ char (str (first input-chain))
+            rest-chain (drop 1 input-chain)]
+        (if (empty? char)
+            true
+            (do 
+                (if (contains? non-terminals-set char)
+                    false
+                    (recur (str (first rest-chain)) (drop 1 rest-chain))
+                )
+            )
+        )
+    )
+)
+
+;; (defn create-set-of-variables-that-derives-to-terminals
+;;     "Given a production rules set and a non-terminals set, returns a set of variables that derives to an only terminals symbols"
+;;     [production-set non-terminals-set]
+
+;; )
+
+;; (defn remove-useless-productions
+;;     "Given a production rules set and a non terminals set, removes useless productions"
+;;     [productions-rules non-terminals-set]
+
+;; )

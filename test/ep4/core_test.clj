@@ -125,3 +125,21 @@
     (println "clean-set: \n" clean-set)
   )
 )
+
+(deftest word-only-terminals-assert
+  (testing "word-only-terminals-assert")
+  (let
+    [raw-input (slurp "resources/unitProductions.json")
+     input (ip/parse-input raw-input)
+     word "aabbb"
+     other-word "aabBb"
+     non-terminals-set (ip/get-non-terminals (:grammar input)) 
+     assertion (ttc/is-only-terminals? word non-terminals-set)]
+    (println "############### word-only-terminals-assert ################")
+    (println "word: \n" word)
+    (println "non-terminals-set: \n" non-terminals-set)
+    (println "assertion: \n" assertion)
+    (println "other word: \n" other-word)
+    (println "assertion: \n" (ttc/is-only-terminals? other-word non-terminals-set))
+  )
+)
