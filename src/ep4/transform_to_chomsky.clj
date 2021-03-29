@@ -212,3 +212,21 @@
     ] 
     useless-free)
 )
+
+(defn terminal-has-producer?
+    "Given a terminal symbol and production rules set, asserts if there's direct derivation"
+    [terminal prod-set]
+    (loop
+        [rule (first prod-set)
+         rest-rules (drop 1 prod-set)]
+        (if (= nil rule)
+            false
+            (do
+                (if (= (first (vals rule)) terminal)
+                    true
+                    (recur (first rest-rules) (drop 1 rest-rules))
+                )
+            )
+        )    
+    )
+)

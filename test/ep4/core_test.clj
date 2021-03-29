@@ -245,3 +245,18 @@
     (println "pre-chomsky: \n" pre-chomsky)
   )
 )
+
+(deftest terminal-has-producer
+  (testing "terminal-has-producer")
+  (let
+    [raw-input (slurp "resources/chomskyExample.json")
+     input (ip/parse-input raw-input)
+     production-set (ip/get-productions (:grammar input))
+     terminal "a" 
+     assert (ttc/terminal-has-producer? terminal production-set)]
+    (println "############### terminal-has-producer ################")
+    (println "production-set: \n" production-set)
+    (println "terminal: \n" terminal)
+    (println "assert: \n" assert)
+  )
+)
