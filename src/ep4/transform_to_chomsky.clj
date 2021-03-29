@@ -37,4 +37,17 @@
         ) #{} production-set
     )    
 )
+
+(defn substitute
+    "given a unit rule and another rule, returns the rule with the transitive value of the unit rule"
+    [unit-rule rule-to-substitute]
+    (let [  key-unit (first (keys unit-rule))
+            val-unit (first (vals unit-rule))
+            key-rule (first (keys rule-to-substitute))
+            val-rule (first (vals rule-to-substitute)) 
+            new-val  (clojure.string/replace val-rule key-unit val-unit)]
+
+        {key-rule new-val}        
+    )    
+)
 ;; (conj acc rule)

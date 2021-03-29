@@ -96,3 +96,16 @@
     (println "clean-set: \n" clean-set)
   )
 )
+
+(deftest substitution-procedure
+  (testing "substitution-procedure")
+  (let
+    [unit-rule {"A" "B"}
+     rule {"S" "aA"}
+     new-rule (ttc/substitute unit-rule rule) ]
+    (println "############### substitution-procedure ################")
+    (println "unit-rule: \n" unit-rule)
+    (println "rule: \n" rule)
+    (println "new-rule: \n" new-rule)
+  )
+)
