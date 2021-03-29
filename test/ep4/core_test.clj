@@ -195,3 +195,20 @@
     (println "potential-variables: \n" potential-variables)
   )
 )
+
+(deftest remove-derivations-that-doesnt-generates-given-symbols
+  (testing "remove-derivations-that-doesnt-generates-given-symbols")
+  (let
+    [raw-input (slurp "resources/chomskyExample.json")
+     input (ip/parse-input raw-input)
+     production-set (ip/get-productions (:grammar input))
+     non-terminals-set (ip/get-non-terminals (:grammar input)) 
+     variables-set (ttc/create-set-of-variables-that-derives-to-terminals production-set non-terminals-set)
+     potential-variables (ttc/create-set-of-potential-variables  production-set variables-set non-terminals-set)
+     clean-set (ttc/remove-derivations-that-doesnt-generates-given-symbols production-set potential-variables)]
+    (println "############### remove-derivations-that-doesnt-generates-given-symbols ################")
+    (println "production-set: \n" production-set)
+    (println "potential-variables: \n" potential-variables)
+    (println "clean-set: \n" clean-set)
+  )
+)
