@@ -205,7 +205,7 @@
      non-terminals-set (ip/get-non-terminals (:grammar input)) 
      variables-set (ttc/create-set-of-variables-that-derives-to-terminals production-set non-terminals-set)
      potential-variables (ttc/create-set-of-potential-variables  production-set variables-set non-terminals-set)
-     clean-set (ttc/remove-derivations-that-doesnt-generates-given-symbols production-set potential-variables)]
+     clean-set (ttc/remove-derivations-that-doesnt-generates-given-symbols production-set potential-variables non-terminals-set)]
     (println "############### remove-derivations-that-doesnt-generates-given-symbols ################")
     (println "production-set: \n" production-set)
     (println "potential-variables: \n" potential-variables)
@@ -226,5 +226,22 @@
     (println "production-set: \n" production-set)
     (println "initial: \n" initial)
     (println "reachable-set: \n" reachable-set)
+  )
+)
+
+(deftest remove-useless-derivations
+  (testing "remove-useless-derivations")
+  (let
+    [raw-input (slurp "resources/chomskyExample.json")
+     input (ip/parse-input raw-input)
+     production-set (ip/get-productions (:grammar input))
+     non-terminals-set (ip/get-non-terminals (:grammar input)) 
+     initial (ip/get-initial (:grammar input)) 
+     pre-chomsky (ttc/pre-chomsky production-set non-terminals-set initial)]
+    (println "############### remove-useless-derivations ################")
+    (println "production-set: \n" production-set)
+    (println "non-terminals-set: \n" non-terminals-set)
+    (println "initial: \n" initial)
+    (println "pre-chomsky: \n" pre-chomsky)
   )
 )

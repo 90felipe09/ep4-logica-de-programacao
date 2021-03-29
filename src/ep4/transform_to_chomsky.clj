@@ -30,9 +30,9 @@
     [production-set]
     (reduce (
         fn [acc rule] (
-            if (not (is-redundant-production? rule))
+            if (is-redundant-production? rule)
+                acc
                 (conj acc rule)
-            acc
             ) 
         ) #{} production-set
     )    
@@ -46,19 +46,19 @@
             key-rule (first (keys rule-to-substitute))
             val-rule (first (vals rule-to-substitute)) 
             new-val  (clojure.string/replace val-rule key-unit val-unit)]
-
         {key-rule new-val}        
     )    
 )
 
 (defn get-substitution-set
     "given a rule and a production set, returns a set of rules upon substitution operation"
-    [rule-sub production-set]
+    [rule-sub production-set non-terminals]
     (reduce (
         fn [acc rule] (
-            if (not (= rule-sub rule))
+            if (and (not (= rule-sub rule)) (not (is-unit-production? rule non-terminals)))
                 (conj acc (substitute rule-sub rule))
-            acc)
+                acc
+            )
         ) #{} production-set
     )   
 )
@@ -70,7 +70,7 @@
         (reduce (
             fn [acc rule] (
                 if (is-unit-production? rule non-terminal-set)
-                    (concat acc (get-substitution-set rule production-set))
+                    (concat acc (get-substitution-set rule production-set non-terminal-set))
                     (conj acc rule)  
                 ) 
             ) #{} production-set
@@ -142,10 +142,10 @@
 (defn remove-derivations-that-doesnt-generates-given-symbols
     "Given a productions set and a set of symbols, returns another production set without productions that doesn't generates
     derivations that is not mentioned in the given symbols set"
-    [productions-set symbols-set]
+    [productions-set symbols-set non-terminals]
     (reduce (
         fn [acc rule] (
-            if (has-one-of-the-vars-in-word? (first (vals rule)) symbols-set)
+            if (or (has-one-of-the-vars-in-word? (first (vals rule)) symbols-set) (is-only-terminals? (first (vals rule) ) non-terminals) )
                 (conj acc rule)
                 acc
         )) #{} productions-set
@@ -176,4 +176,39 @@
                 acc
         )) #{} productions-set
     )   
+)
+
+(defn remove-unreachable-derivations
+    "remove all derivations which variable does not belongs to the reachable set"
+    [prod-set reachable-set]
+    (reduce (
+        fn [acc rule] (
+            if (contains? reachable-set (first (keys rule)))
+                (conj acc rule)
+                acc
+        )) #{} prod-set
+    )   
+)
+
+(defn remove-useless-productions
+    "Given a production rules set, a non terminals set and an initial symbol, returns a production rules set free of useless productions"
+    [prod-set non-terminals initial]
+    (let [
+        vars-to-terminals (create-set-of-variables-that-derives-to-terminals prod-set non-terminals)
+        potential-vars (create-set-of-potential-variables prod-set vars-to-terminals non-terminals)
+        no-useless-derivations (remove-derivations-that-doesnt-generates-given-symbols prod-set potential-vars non-terminals)
+        s-reachable-variables (create-S-reachable-variables-set prod-set initial non-terminals)
+        no-unreachable-derivations (remove-unreachable-derivations no-useless-derivations s-reachable-variables)
+    ]
+    no-unreachable-derivations)
+)
+
+(defn pre-chomsky
+    "given a production set, non terminal symbols set and a initial symbol, returns a production set in pre chomsky state"
+    [prod-set non-terminals, initial]
+    (let [  null-free (remove-null-productions prod-set)
+            unit-free (remove-unit-productions null-free non-terminals)
+            useless-free (remove-useless-productions unit-free non-terminals initial)
+    ] 
+    useless-free)
 )
