@@ -50,4 +50,30 @@
         {key-rule new-val}        
     )    
 )
-;; (conj acc rule)
+
+(defn get-substitution-set
+    "given a rule and a production set, returns a set of rules upon substitution operation"
+    [rule-sub production-set]
+    (reduce (
+        fn [acc rule] (
+            if (not (= rule-sub rule))
+                (conj acc (substitute rule-sub rule))
+            acc)
+        ) #{} production-set
+    )   
+)
+
+(defn remove-unit-productions
+    "Given a production rules set and a non terminals set, returns production rules without unit productions"
+    [production-set non-terminal-set]
+    (remove-redundant-productions 
+        (reduce (
+            fn [acc rule] (
+                if (is-unit-production? rule non-terminal-set)
+                    (concat acc (get-substitution-set rule production-set))
+                    (conj acc rule)  
+                ) 
+            ) #{} production-set
+        ) 
+    ) 
+)    

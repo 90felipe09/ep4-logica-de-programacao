@@ -109,3 +109,19 @@
     (println "new-rule: \n" new-rule)
   )
 )
+
+(deftest remove-unit-productions
+  (testing "remove-unit-productions")
+  (let
+    [raw-input (slurp "resources/unitProductions.json")
+     input (ip/parse-input raw-input)
+     production-set (ip/get-productions (:grammar input))
+     non-terminals-set (ip/get-non-terminals (:grammar input)) 
+     clean-set (ttc/remove-unit-productions production-set non-terminals-set)]
+    (println "############### remove-unit-productions ################")
+    (println "unitProductions.json:")
+    (println "production-set: \n" production-set)
+    (println "non-terminals-set: \n" non-terminals-set)
+    (println "clean-set: \n" clean-set)
+  )
+)
