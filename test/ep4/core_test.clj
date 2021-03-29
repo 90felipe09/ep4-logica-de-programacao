@@ -212,3 +212,19 @@
     (println "clean-set: \n" clean-set)
   )
 )
+
+(deftest create-S-reachable-variables-set
+  (testing "create-S-reachable-variables-set")
+  (let
+    [raw-input (slurp "resources/chomskyExample.json")
+     input (ip/parse-input raw-input)
+     production-set (ip/get-productions (:grammar input))
+     non-terminals-set (ip/get-non-terminals (:grammar input)) 
+     initial (ip/get-initial (:grammar input)) 
+     reachable-set (ttc/create-S-reachable-variables-set production-set initial non-terminals-set)]
+    (println "############### create-S-reachable-variables-set ################")
+    (println "production-set: \n" production-set)
+    (println "initial: \n" initial)
+    (println "reachable-set: \n" reachable-set)
+  )
+)

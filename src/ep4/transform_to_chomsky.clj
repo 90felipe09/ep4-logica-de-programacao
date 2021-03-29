@@ -143,11 +143,36 @@
     "Given a productions set and a set of symbols, returns another production set without productions that doesn't generates
     derivations that is not mentioned in the given symbols set"
     [productions-set symbols-set]
-    (println symbols-set)
     (reduce (
         fn [acc rule] (
             if (has-one-of-the-vars-in-word? (first (vals rule)) symbols-set)
                 (conj acc rule)
+                acc
+        )) #{} productions-set
+    )   
+)
+
+(defn create-S-reachable-variables-set
+    "Given a productions set and an initial symbol, returns a set of variables reachable from S"
+    [productions-set initial-symbol non-terminal-symbols]
+    (reduce (
+        fn [acc rule] (
+            if (= (first (keys rule)) initial-symbol)
+                (do
+                    (loop [ char (str (first (vals rule)))
+                            rest-chain (drop 1 (first (vals rule)))
+                            is-var (contains? non-terminal-symbols char)]
+                        (if (empty? char)
+                            acc
+                            (do
+                                (if is-var
+                                    (conj acc char)
+                                    (recur (str (first rest-chain)) (drop 1 rest-chain) (contains? non-terminal-symbols (str (first rest-chain))))
+                                )
+                            )
+                        )
+                    )
+                )
                 acc
         )) #{} productions-set
     )   

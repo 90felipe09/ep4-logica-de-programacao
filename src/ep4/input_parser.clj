@@ -39,3 +39,10 @@
   [parsed-grammar]
   (parsed-grammar 0)
 )
+
+
+(defn get-initial
+  "Given a parsed grammar, returns it's initial symbol"
+  [parsed-grammar]
+  (parsed-grammar 3)
+)
