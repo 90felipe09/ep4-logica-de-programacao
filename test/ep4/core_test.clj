@@ -260,3 +260,23 @@
     (println "assert: \n" assert)
   )
 )
+
+(deftest identify-terminal-symbols
+  (testing "identify-terminal-symbols")
+  (let
+    [raw-input (slurp "resources/chomskyExample.json")
+     input (ip/parse-input raw-input)
+     production-set (ip/get-productions (:grammar input))
+     non-terminals-set (ip/get-non-terminals (:grammar input)) 
+     initial (ip/get-initial (:grammar input)) 
+     pre-chomsky (ttc/pre-chomsky production-set non-terminals-set initial)
+     terminal-symbols (ttc/identify-terminal-symbols pre-chomsky non-terminals-set)
+     ]
+    (println "############### identify-terminal-symbols ################")
+    (println "production-set: \n" production-set)
+    (println "non-terminals-set: \n" non-terminals-set)
+    (println "initial: \n" initial)
+    (println "pre-chomsky: \n" pre-chomsky)
+    (println "terminal symbols: \n" terminal-symbols)
+  )
+)

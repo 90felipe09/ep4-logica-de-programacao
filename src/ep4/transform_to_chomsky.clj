@@ -230,3 +230,23 @@
         )    
     )
 )
+
+(defn identify-terminal-symbols
+    "Given a production rules set, returns a set of terminal symbols"
+    [prod-set non-terminals]
+    (reduce (
+            fn [acc rule] (
+                loop [  char (str (first (first (vals rule))))
+                        rest (drop 1 (first (vals rule)))
+                        acumulator acc]
+                    (if (empty? char)
+                        acumulator
+                        (if (contains? non-terminals char)
+                            (recur (str (first rest)) (drop 1 rest) acumulator)
+                            (recur (str (first rest)) (drop 1 rest) (conj acumulator char))
+                        )
+                    )
+            )
+        ) #{} prod-set
+    )
+)
