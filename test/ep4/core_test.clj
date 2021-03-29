@@ -63,3 +63,22 @@
     (is (= false (ttc/is-unit-production? (last production-set) non-terminals-set)))
   )
 )
+
+(deftest redundant-production-assertion
+  (testing "redundant-production-assertion")
+  (let
+    [raw-input (slurp "resources/redundantProductions.json")
+     input (ip/parse-input raw-input)
+     production-set (ip/get-productions (:grammar input)) 
+     assertion (ttc/is-redundant-production? (first production-set))]
+    (println "############### redundant-production-assertion ################")
+    (println "redundantProductions.json:")
+    (println "production-set: \n" production-set)
+    (println "production-rule: \n" (first production-set))
+    (println "is redundant: \n" assertion)
+    (is (= assertion false))
+    (println "production-rule: \n" (last production-set))
+    (println "is redundant: \n" (ttc/is-redundant-production? (last production-set)))
+    (is (= (ttc/is-redundant-production? (last production-set)) true))
+  )
+)

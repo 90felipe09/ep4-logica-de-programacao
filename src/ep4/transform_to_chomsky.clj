@@ -19,5 +19,9 @@
     (contains? non-terminal-set (first (vals rule)) )
 )
 
-
+(defn is-redundant-production?
+    "verifies if a rule produces the same variable"
+    [rule]
+    (= (first (keys rule)) (first (vals rule)))
+)
 ;; (conj acc rule)
