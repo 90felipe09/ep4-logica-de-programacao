@@ -24,4 +24,17 @@
     [rule]
     (= (first (keys rule)) (first (vals rule)))
 )
+
+(defn remove-redundant-productions
+    "given a production rules set, removes all redundant productions"
+    [production-set]
+    (reduce (
+        fn [acc rule] (
+            if (not (is-redundant-production? rule))
+                (conj acc rule)
+            acc
+            ) 
+        ) #{} production-set
+    )    
+)
 ;; (conj acc rule)

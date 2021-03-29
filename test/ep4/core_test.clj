@@ -82,3 +82,17 @@
     (is (= (ttc/is-redundant-production? (last production-set)) true))
   )
 )
+
+(deftest remove-redundant-production
+  (testing "remove-redundant-production")
+  (let
+    [raw-input (slurp "resources/redundantProductions.json")
+     input (ip/parse-input raw-input)
+     production-set (ip/get-productions (:grammar input)) 
+     clean-set (ttc/remove-redundant-productions production-set)]
+    (println "############### remove-redundant-production ################")
+    (println "redundantProductions.json:")
+    (println "production-set: \n" production-set)
+    (println "clean-set: \n" clean-set)
+  )
+)
