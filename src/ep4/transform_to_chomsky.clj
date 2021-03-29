@@ -131,6 +131,18 @@
     )
 )
 
+(defn create-set-of-variables-that-derives-to-terminals-and-non-terminals
+    "Given a production rules set and a non-terminals set, returns a set of variables that derives to a word of terminals and non terminals"
+    [production-set non-terminals-set]
+    (reduce (
+        fn [acc rule] (
+            if (has-terminals-and-variables? (first (vals rule)) non-terminals-set)
+                (conj acc (first (keys rule)))
+            acc)
+        ) #{} production-set
+    )
+)
+
 ;; (defn remove-useless-productions
 ;;     "Given a production rules set and a non terminals set, removes useless productions"
 ;;     [productions-rules non-terminals-set]
