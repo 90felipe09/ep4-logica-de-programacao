@@ -34,3 +34,8 @@
   (parsed-grammar 2)
 )
 
+(defn get-non-terminals
+  "Given a parsed grammar, returns it's non-terminals set"
+  [parsed-grammar]
+  (parsed-grammar 0)
+)

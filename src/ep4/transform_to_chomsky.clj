@@ -13,4 +13,11 @@
     )
 )
 
+(defn is-unit-production?
+    "verifies if a rule is a unit production by comparing to non terminal symbols of a grammar"
+    [rule non-terminal-set]
+    (contains? non-terminal-set (first (vals rule)) )
+)
+
+
 ;; (conj acc rule)
