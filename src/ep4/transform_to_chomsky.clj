@@ -107,44 +107,21 @@
     )
 )
 
-(defn has-terminals-and-variables?
-    "Given a string and a set of non-terminal symbols, asserts if it's made of both non-terminals and terminals"
-    [input-chain non-terminals-set]
+(defn has-one-of-the-vars-in-word?
+    "Given a string and a set of symbols, asserts if there's a occurrence of this string in there"
+    [input-chain symbols-set]
     (loop [ char (str (first input-chain))
             rest-chain (drop 1 input-chain)
-            has-non-terminal (contains? non-terminals-set char)
-            has-terminal (not has-non-terminal)]
+            has-symbol (contains? symbols-set char)]
         (if (empty? char)
             false
-            (do 
-                (if (and has-terminal has-non-terminal)
+            (do
+                (if has-symbol
                     true
-                    (do
-                        (if has-terminal
-                            (recur (str (first rest-chain)) (drop 1 rest-chain) (contains? non-terminals-set (str (first rest-chain))) true)
-                            (recur (str (first rest-chain)) (drop 1 rest-chain) true (not (contains? non-terminals-set (str (first rest-chain)))))
-                        )
-                    )
+                    (recur (str (first rest-chain)) (drop 1 rest-chain) (contains? symbols-set (str (first rest-chain))))
                 )
             )
         )
     )
 )
 
-(defn create-set-of-variables-that-derives-to-terminals-and-non-terminals
-    "Given a production rules set and a non-terminals set, returns a set of variables that derives to a word of terminals and non terminals"
-    [production-set non-terminals-set]
-    (reduce (
-        fn [acc rule] (
-            if (has-terminals-and-variables? (first (vals rule)) non-terminals-set)
-                (conj acc (first (keys rule)))
-            acc)
-        ) #{} production-set
-    )
-)
-
-;; (defn remove-useless-productions
-;;     "Given a production rules set and a non terminals set, removes useless productions"
-;;     [productions-rules non-terminals-set]
-
-;; )

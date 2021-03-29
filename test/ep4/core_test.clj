@@ -159,40 +159,21 @@
   )
 )
 
-(deftest has-terminals-and-variables-assert
-  (testing "has-terminals-and-variables-assert")
+(deftest word-has-symbol-assert
+  (testing "word-has-symbol-assert")
   (let
     [raw-input (slurp "resources/unitProductions.json")
      input (ip/parse-input raw-input)
-     word "ab"
-     other-word "aB"
-     another-word "AB"
+     word "aabB"
+     other "aabb"
      non-terminals-set (ip/get-non-terminals (:grammar input)) 
-     assertion1 (ttc/has-terminals-and-variables? word non-terminals-set)
-     assertion2 (ttc/has-terminals-and-variables? other-word non-terminals-set)
-     assertion3 (ttc/has-terminals-and-variables? another-word non-terminals-set)]
-    (println "############### has-terminals-and-variables-assert ################")
+     assert1 (ttc/has-one-of-the-vars-in-word? word non-terminals-set)
+     assert2 (ttc/has-one-of-the-vars-in-word? other non-terminals-set)]
+    (println "############### word-has-symbol-assert ################")
     (println "word: \n" word)
+    (println "other: \n" other)
     (println "non-terminals-set: \n" non-terminals-set)
-    (println "assertion: \n" assertion1)
-    (println "other word: \n" other-word)
-    (println "assertion: \n" assertion2)
-    (println "other word: \n" another-word)
-    (println "assertion: \n" assertion3)
-  )
-)
-
-(deftest create-set-of-variables-with-terminals-and-non-terminals
-  (testing "create-set-of-variables-with-terminals-and-non-terminals")
-  (let
-    [raw-input (slurp "resources/unitProductions.json")
-     input (ip/parse-input raw-input)
-     production-set (ip/get-productions (:grammar input))
-     non-terminals-set (ip/get-non-terminals (:grammar input)) 
-     variables-set (ttc/create-set-of-variables-that-derives-to-terminals-and-non-terminals production-set non-terminals-set)]
-    (println "############### create-set-of-variables-with-terminals-and-non-terminals ################")
-    (println "production-set: \n" production-set)
-    (println "non-terminals-set: \n" non-terminals-set)
-    (println "variables-set: \n" variables-set)
+    (println "assert1: \n" assert1)
+    (println "assert2: \n" assert2)
   )
 )
