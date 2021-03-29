@@ -95,11 +95,17 @@
     )
 )
 
-;; (defn create-set-of-variables-that-derives-to-terminals
-;;     "Given a production rules set and a non-terminals set, returns a set of variables that derives to an only terminals symbols"
-;;     [production-set non-terminals-set]
-
-;; )
+(defn create-set-of-variables-that-derives-to-terminals
+    "Given a production rules set and a non-terminals set, returns a set of variables that derives to an only terminals symbols"
+    [production-set non-terminals-set]
+    (reduce (
+        fn [acc rule] (
+            if (is-only-terminals? (first (vals rule)) non-terminals-set)
+                (conj acc (first (keys rule)))
+            acc)
+        ) #{} production-set
+    )
+)
 
 ;; (defn remove-useless-productions
 ;;     "Given a production rules set and a non terminals set, removes useless productions"

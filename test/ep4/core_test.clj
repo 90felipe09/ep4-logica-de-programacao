@@ -143,3 +143,18 @@
     (println "assertion: \n" (ttc/is-only-terminals? other-word non-terminals-set))
   )
 )
+
+(deftest create-set-of-variables-with-only-terminals
+  (testing "create-set-of-variables-with-only-terminals")
+  (let
+    [raw-input (slurp "resources/unitProductions.json")
+     input (ip/parse-input raw-input)
+     production-set (ip/get-productions (:grammar input))
+     non-terminals-set (ip/get-non-terminals (:grammar input)) 
+     variables-set (ttc/create-set-of-variables-that-derives-to-terminals production-set non-terminals-set)]
+    (println "############### create-set-of-variables-with-only-terminals ################")
+    (println "production-set: \n" production-set)
+    (println "non-terminals-set: \n" non-terminals-set)
+    (println "variables-set: \n" variables-set)
+  )
+)
