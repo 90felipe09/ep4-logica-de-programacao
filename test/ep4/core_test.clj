@@ -158,3 +158,26 @@
     (println "variables-set: \n" variables-set)
   )
 )
+
+(deftest has-terminals-and-variables-assert
+  (testing "has-terminals-and-variables-assert")
+  (let
+    [raw-input (slurp "resources/unitProductions.json")
+     input (ip/parse-input raw-input)
+     word "ab"
+     other-word "aB"
+     another-word "AB"
+     non-terminals-set (ip/get-non-terminals (:grammar input)) 
+     assertion1 (ttc/has-terminals-and-variables? word non-terminals-set)
+     assertion2 (ttc/has-terminals-and-variables? other-word non-terminals-set)
+     assertion3 (ttc/has-terminals-and-variables? another-word non-terminals-set)]
+    (println "############### has-terminals-and-variables-assert ################")
+    (println "word: \n" word)
+    (println "non-terminals-set: \n" non-terminals-set)
+    (println "assertion: \n" assertion1)
+    (println "other word: \n" other-word)
+    (println "assertion: \n" assertion2)
+    (println "other word: \n" another-word)
+    (println "assertion: \n" assertion3)
+  )
+)

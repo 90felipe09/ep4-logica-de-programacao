@@ -107,6 +107,30 @@
     )
 )
 
+(defn has-terminals-and-variables?
+    "Given a string and a set of non-terminal symbols, asserts if it's made of both non-terminals and terminals"
+    [input-chain non-terminals-set]
+    (loop [ char (str (first input-chain))
+            rest-chain (drop 1 input-chain)
+            has-non-terminal (contains? non-terminals-set char)
+            has-terminal (not has-non-terminal)]
+        (if (empty? char)
+            false
+            (do 
+                (if (and has-terminal has-non-terminal)
+                    true
+                    (do
+                        (if has-terminal
+                            (recur (str (first rest-chain)) (drop 1 rest-chain) (contains? non-terminals-set (str (first rest-chain))) true)
+                            (recur (str (first rest-chain)) (drop 1 rest-chain) true (not (contains? non-terminals-set (str (first rest-chain)))))
+                        )
+                    )
+                )
+            )
+        )
+    )
+)
+
 ;; (defn remove-useless-productions
 ;;     "Given a production rules set and a non terminals set, removes useless productions"
 ;;     [productions-rules non-terminals-set]
