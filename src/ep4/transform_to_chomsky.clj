@@ -1,4 +1,5 @@
 (ns ep4.transform_to_chomsky (:gen-class))
+(require '[ep4.input_parser :as ip])
 
 (defn remove-null-productions
     "Outputs a set of productions by removing null productions from input set"
@@ -252,15 +253,170 @@
     )
 )
 
+(defn rand-str [len]
+  (apply str (take len (repeatedly #(char (+ (rand 26) 65))))))
+
+(defn variable-exist?
+    "given a production rules set and a variable name, assert if there is a rule that parts from the variable"
+    [prod-set variable]
+    (loop [ rule (first prod-set)
+            set-rest (drop 1 prod-set)]
+        (if (empty? rule)
+            false
+            (do
+                (if (= (first (keys rule)) variable)
+                    true
+                    (recur (first set-rest) (drop 1 set-rest))
+                )
+            )
+        )
+    )
+)
+
+(defn create-new-variable
+    "Given a production set, returns a random variable name that doesn't exist in the prod-set"
+    [prod-set]
+    (loop [ new-var-name (rand-str 1) 
+            already-exist (variable-exist? prod-set new-var-name)
+    ]
+        (if already-exist
+            (do
+                (let [  new-var-name (rand-str 1) 
+                        already-exist (variable-exist? prod-set new-var-name)]
+                    (recur new-var-name already-exist)
+                )
+            )
+            new-var-name
+        )
+    )
+)
+
 (defn create-terminal-productions
     "Given a production rules set, terminal symbols"
     [prod-set terminal-symbols]
     (reduce (
             fn [acc terminal] (
                 if (not (terminal-has-producer? terminal prod-set))
-                    (conj acc #{(str "@T" terminal) terminal})
+                    (conj acc {(create-new-variable acc) terminal})
                     acc
             )
         ) prod-set terminal-symbols
     )
+)
+
+(defn substitute-terminals
+    "Given a specific rule, non-terminals set and a production set, substitute all it's terminal occurrences for another rule"
+    [rule prod-set non-terminals]
+    (let [  derivation (first (vals rule)) 
+            variable (first (keys rule))]
+        (reduce (
+            fn [resultant-derivation rule-to-apply] (
+                if (and (is-only-terminals? rule-to-apply non-terminals) (= (count (first (vals rule-to-apply))) 1))
+                    (clojure.string/replace resultant-derivation (first (vals rule-to-apply)) (first (keys rule-to-apply)))
+                    resultant-derivation
+                )
+            ) derivation prod-set
+        )
+    )
+)
+
+(defn has-terminals?
+    "Given a rule and a set of non-terminals, asserts if there are non-terminals"
+    [rule non-terminals]
+    (loop [ char (str (first (first (vals rule))))
+            rest (drop 1 (first (vals rule)))]
+        (if (empty? char)
+            false
+            (do
+                (if (contains? non-terminals char)
+                    (recur (str (first rest)) (drop 1 rest))
+                    true
+                )
+            )
+        )
+    )
+)
+
+(defn get-set-without-terminals-on-right-side
+    "Given a prod set and a non-terminal symbols set, substitute terminals occurrences on the right side for the variables"
+    [prod-set non-terminals]
+    (reduce (
+        fn [acc rule] (
+            if (and (has-terminals? rule non-terminals) (not (= (count (first (vals rule))) 1)))
+                (conj acc {(first (keys rule)) (substitute-terminals rule prod-set non-terminals)})
+                (conj acc rule)
+        )
+    ) #{} prod-set)
+)
+
+(defn minimization-to-2
+    "Given a greater than 2 chain, returns a set of derivations of size 2 that is equivalent"
+    ([rule prod-set]
+    (let [  rule-key (first (keys rule))
+            rule-val (first (vals rule))
+            left-part (first rule-val)
+            right-part (drop 1 rule-val)
+            set-of-derivations #{}]
+        (if (> (count right-part) 2)
+            (do
+                (let [  minimization-result (minimization-to-2 set-of-derivations right-part)
+                        resultant-set (minimization-result :set-of-derivations) 
+                        resultant-prod (minimization-result :resultant-prod)
+                        new-prod {(create-new-variable prod-set) resultant-prod}]
+                    (conj minimization-result new-prod)
+                )
+            )
+            (do
+                (let [  new-var-name (create-new-variable prod-set)
+                        resultant-prod {new-var-name (apply str right-part)}
+                        auxiliary-prod-set (conj prod-set resultant-prod)
+                        var-substitution-name (create-new-variable auxiliary-prod-set)
+                        derivation-substitution (str left-part new-var-name)
+                        substitution-prod {rule-key derivation-substitution}
+                ]
+                    #{resultant-prod substitution-prod}
+                )
+            )
+        )
+    ))
+    ([set-of-derivations derivation prod-set]
+    (let [  left-part (first derivation)
+            right-part (drop 1 derivation)
+            auxiliary-prod-set (conj set-of-derivations prod-set)
+            new-rule #{(create-new-variable auxiliary-prod-set) right-part}]
+        (if (> (count right-part) 2)
+            {:set-of-derivations ((minimization-to-2 set-of-derivations derivation) :set-of-derivations) :derivation new-rule}
+            {:set-of-derivations (conj set-of-derivations new-rule) :derivation new-rule}
+        )
+    ))
+)
+
+(defn minimize-to-size-2
+    "Given a production rules set, for every rule that derives to a chain bigger than 2,
+    substitute it for production rules of size 2 that are equivalent to the original."
+    [prod-set]
+    (reduce (
+        fn [acc rule] (
+                if (> (count (first (vals rule))) 2)
+                    (concat acc (minimization-to-2 rule prod-set))
+                    (conj acc rule)
+            )
+        ) #{} prod-set
+    )
+)
+
+(defn to-chomsky
+    "given a grammar path, returns a production rules set on chomsky normal form"
+    [path]
+    (let [
+        raw-input (slurp path)
+        input (ip/parse-input raw-input)
+        production-set (ip/get-productions (:grammar input))
+        non-terminals-set (ip/get-non-terminals (:grammar input)) 
+        initial (ip/get-initial (:grammar input)) 
+        pre-chomsky (pre-chomsky production-set non-terminals-set initial)
+        terminal-symbols (identify-terminal-symbols pre-chomsky non-terminals-set)
+        with-terminals (create-terminal-productions pre-chomsky terminal-symbols)
+        only-variables (get-set-without-terminals-on-right-side with-terminals non-terminals-set)
+    ] (minimize-to-size-2 only-variables))
 )
