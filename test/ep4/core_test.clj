@@ -280,3 +280,25 @@
     (println "terminal symbols: \n" terminal-symbols)
   )
 )
+
+(deftest add-terminal-productions
+  (testing "add-terminal-productions")
+  (let
+    [raw-input (slurp "resources/chomsky.json")
+     input (ip/parse-input raw-input)
+     production-set (ip/get-productions (:grammar input))
+     non-terminals-set (ip/get-non-terminals (:grammar input)) 
+     initial (ip/get-initial (:grammar input)) 
+     pre-chomsky (ttc/pre-chomsky production-set non-terminals-set initial)
+     terminal-symbols (ttc/identify-terminal-symbols pre-chomsky non-terminals-set)
+     with-terminals (ttc/create-terminal-productions pre-chomsky terminal-symbols)
+     ]
+    (println "############### add-terminal-productions ################")
+    (println "production-set: \n" production-set)
+    (println "non-terminals-set: \n" non-terminals-set)
+    (println "initial: \n" initial)
+    (println "pre-chomsky: \n" pre-chomsky)
+    (println "terminal symbols: \n" terminal-symbols)
+    (println "with terminal: \n" with-terminals)
+  )
+)

@@ -159,22 +159,23 @@
         fn [acc rule] (
             if (= (first (keys rule)) initial-symbol)
                 (do
-                    (loop [ char (str (first (vals rule)))
+                    (loop [ char (str (first (first (vals rule))))
                             rest-chain (drop 1 (first (vals rule)))
-                            is-var (contains? non-terminal-symbols char)]
+                            is-var (contains? non-terminal-symbols char)
+                            acumulator acc]
                         (if (empty? char)
-                            acc
+                            acumulator
                             (do
                                 (if is-var
-                                    (conj acc char)
-                                    (recur (str (first rest-chain)) (drop 1 rest-chain) (contains? non-terminal-symbols (str (first rest-chain))))
+                                    (recur (str (first rest-chain)) (drop 1 rest-chain) (contains? non-terminal-symbols (str (first rest-chain))) (conj acumulator char))
+                                    (recur (str (first rest-chain)) (drop 1 rest-chain) (contains? non-terminal-symbols (str (first rest-chain))) acumulator)
                                 )
                             )
                         )
                     )
                 )
                 acc
-        )) #{} productions-set
+        )) #{initial-symbol} productions-set
     )   
 )
 
@@ -248,5 +249,18 @@
                     )
             )
         ) #{} prod-set
+    )
+)
+
+(defn create-terminal-productions
+    "Given a production rules set, terminal symbols"
+    [prod-set terminal-symbols]
+    (reduce (
+            fn [acc terminal] (
+                if (not (terminal-has-producer? terminal prod-set))
+                    (conj acc #{(str "@T" terminal) terminal})
+                    acc
+            )
+        ) prod-set terminal-symbols
     )
 )
