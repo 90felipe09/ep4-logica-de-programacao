@@ -27,6 +27,7 @@
         regression-rules '(["aS" "S"]
                            ["aa" "S"])]
     ;TODO: uma parte do algoritmo precisa mudar pra testar as regressões aS, SS e Sa e considerar a possibilidade de ambiguidade (tando aS quanto Sa quanto SS, por exemplo)
-    (is (= "SS" (recognizer/regress-decomposition head-string tail-string regression-rules)))
-    (is (= nil (recognizer/regress-decomposition bad-string tail-string regression-rules)))
-    (is (= nil (recognizer/regress-decomposition head-string bad-string regression-rules)))))
+    (is (= ["SS" "Sa" "aS"] (recognizer/regress-decomposition head-string tail-string regression-rules)))
+    (is (= ["bS"] (recognizer/regress-decomposition bad-string tail-string regression-rules)))
+    (is (= ["Sb"] (recognizer/regress-decomposition head-string bad-string regression-rules)))
+    (is (= nil (recognizer/regress-decomposition bad-string bad-string regression-rules)))))
