@@ -5,11 +5,19 @@
 (deftest regress-string-test
   (testing "regress-string")
   (let
-    [regression-rules '(["aS" "S"] ["a" "S"])
-     regressible-string "aS"
-     unregressible-string "b"]
-    (is (= "S" (recognizer/regress-string regressible-string regression-rules)))
-    (is (= nil (recognizer/regress-string unregressible-string regression-rules)))))
+    [production-rules '(["S" "aS"]
+                        ["A" "a"]
+                        ["S" "a"]
+                        ["S" "AS"]
+                        ["S" "SA"])
+     regressible-string "aaaa"
+     unregressible-string "aaSaa"
+     unknown-string "aS"]
+    (recognizer/initialize-recognized-strings production-rules)
+    (is (= #{"S"} (recognizer/regress-string regressible-string)))
+    (is (= nil (recognizer/regress-string unregressible-string)))
+    (println @recognizer/recognized-strings)
+    (println @recognizer/unrecognized-strings)))
 
 (deftest decompose-string-test
   (testing "decompose-string")
@@ -19,15 +27,21 @@
                         ["abc" "d"])]
     (is (= decomposition (recognizer/decompose-string string)))))
 
-(deftest regress-decompostion-test
+(deftest regress-decomposition-test
   (testing "regress-decomposition")
-  (let [head-string "aa"
+  (let [head-string "a"
         tail-string "aS"
         bad-string "b"
-        regression-rules '(["aS" "S"]
-                           ["aa" "S"])]
-    ;TODO: uma parte do algoritmo precisa mudar pra testar as regressões aS, SS e Sa e considerar a possibilidade de ambiguidade (tando aS quanto Sa quanto SS, por exemplo)
-    (is (= ["SS" "Sa" "aS"] (recognizer/regress-decomposition head-string tail-string regression-rules)))
-    (is (= ["bS"] (recognizer/regress-decomposition bad-string tail-string regression-rules)))
-    (is (= ["Sb"] (recognizer/regress-decomposition head-string bad-string regression-rules)))
-    (is (= nil (recognizer/regress-decomposition bad-string bad-string regression-rules)))))
+        production-rules '(["S" "AS"]
+                           ["S" "SA"]
+                           ["S" "a"]
+                           ["A" "a"]
+                           ["S" "S"])]
+    (recognizer/initialize-recognized-strings production-rules)
+    (is (= #{"S"} (recognizer/regress-decomposition head-string tail-string)))
+    (is (= nil (recognizer/regress-decomposition bad-string tail-string)))
+    (is (= nil (recognizer/regress-decomposition head-string bad-string)))
+    (is (= nil (recognizer/regress-decomposition bad-string bad-string)))
+    (println @recognizer/recognized-strings)
+    (println @recognizer/unrecognized-strings)
+    ))
