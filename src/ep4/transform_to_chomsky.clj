@@ -1,5 +1,5 @@
-(ns ep4.transform_to_chomsky (:gen-class))
-(require '[ep4.input_parser :as ip])
+(ns ep4.transform-to-chomsky (:gen-class))
+(require '[ep4.input-parser :as ip])
 
 (defn remove-null-productions
     "Outputs a set of productions by removing null productions from input set"

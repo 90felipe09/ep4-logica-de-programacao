@@ -1,7 +1,7 @@
 (ns ep4.core-test (:gen-class))
 (require '[clojure.test :refer :all])
-(require '[ep4.input_parser :as ip])
-(require '[ep4.transform_to_chomsky :as ttc])
+(require '[ep4.input-parser :as ip])
+(require '[ep4.transform-to-chomsky :as ttc])
 
 (deftest parse-input-correctly
   (testing "parse-input-correctly")

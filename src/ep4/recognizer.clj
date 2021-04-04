@@ -34,7 +34,6 @@
 (defn return-unrecognized
   "same as add-unrecognized-string but returns nil"
   [input-string]
-  (println (str "unrecognized: " input-string))
   (add-unrecognized-string input-string)
   nil)
 
@@ -88,9 +87,8 @@
    head and tail substrings while updating the related agents. Otherwise,
    returns nil."
   [string-head string-tail]
-  (println (str "tail: " string-tail))
-  (if-let [regressed-head (and-print "regressed head: " (regress-string string-head))]
-    (if-let [regressed-tail (and-print "regressed tail: " (regress-string string-tail))]
+  (if-let [regressed-head (regress-string string-head)]
+    (if-let [regressed-tail (regress-string string-tail)]
       (if-let [regressed-combinations (not-empty
                                         (filter #(not= nil %)
                                           (map #(@recognized-strings (apply str %))

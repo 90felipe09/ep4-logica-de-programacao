@@ -1,4 +1,4 @@
-(ns ep4.input_parser (:gen-class))
+(ns ep4.input-parser (:gen-class))
 (require '[clojure.data.json :as json])
 ;; From EP2
 (defn parse-input
